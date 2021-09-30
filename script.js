@@ -8,6 +8,19 @@ const HEIGHT = 500;
 const DIRT_HEIGHT = 50;
 const GRASS_SIZE = 50;
 
+const UPDATE_INTERVAL = 500 //ms
+
+
+// load sun
+const sun = new Image();
+sun.src = 'images/sun.png';
+var sun_offset_x = 117;
+var sun_offset_y = 117;
+var sun_row = 0;
+var sun_col = 0;
+var sun_frame = 0;
+const SUN_FRAMES = 3;
+
 
 // load grass images
 const grass1 = new Image();
@@ -26,9 +39,6 @@ grass4.src = 'images/grass4.png'
 console.log ('A random grass', selectRandomGrass())
 
 
-var grasses = [];
-
-
 // rendering function
 function main() {
 
@@ -37,6 +47,7 @@ function main() {
     ctx.fillRect (0, 0, WIDTH, HEIGHT);
 
     // draw objects
+    drawSun(ctx);
     drawDirt (ctx);
     plantGrass (ctx);
 
@@ -48,9 +59,11 @@ function main() {
 main();
 
 // updates the canvas every 1 sec
-setInterval (() => {
+setInterval ( () => {
+
     requestAnimationFrame (main);
-}, 1000);
+
+}, UPDATE_INTERVAL );
 
 // ================================================================ //
 
@@ -64,15 +77,37 @@ function drawDirt (ctx) {
 
 function plantGrass (ctx) {
 
-    let numberOfGrasses = 100;
+    let numberOfGrasses = 10;
 
     for (let i = 0; i < numberOfGrasses; i++) {
         let grass = selectRandomGrass();
-        let x = randomRange (0, WIDTH);
+        let x = randomRange (-GRASS_SIZE / 2, WIDTH);
         let y = randomRange (HEIGHT - DIRT_HEIGHT - GRASS_SIZE, HEIGHT - GRASS_SIZE)
         ctx.drawImage (grass, x, y, GRASS_SIZE, GRASS_SIZE);
     }
     
+}
+
+function drawSun(ctx) {
+
+    sun_row = Math.floor (sun_frame / SUN_FRAMES);
+    sun_col = sun_frame % SUN_FRAMES;
+
+    console.log ('frame', sun_frame)
+    console.log (sun_row, sun_col);
+
+    ctx.drawImage (
+        sun, 
+        sun_offset_x * sun_row,
+        sun_offset_y * sun_col,
+        sun_offset_x,
+        sun_offset_y,
+        100, 100,
+        sun_offset_x,
+        sun_offset_y
+    )
+
+    sun_frame = (sun_frame + 1) % 9;
 }
 
 // utility functions
